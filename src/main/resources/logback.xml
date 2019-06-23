@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<configuration scan="false">
+	<property name="log.dir" value="/data/wk-api/logs" />
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>[%level] %d{HH:mm:ss.SSS} [%thread] - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	<appender name="default"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoder>
+			<pattern>[%level] %d{HH:mm:ss.SSS} [%thread] - %msg%n
+			</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.dir}/default.log.%d{yyyy-MM-dd}
+			</fileNamePattern>
+			<maxHistory>5</maxHistory>
+			<totalSizeCap>1GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+	<appender name="trade"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoder>
+			<pattern>[%level] %d{HH:mm:ss.SSS} [%thread] - %msg%n
+			</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.dir}/trade.log.%d{yyyy-MM-dd}
+			</fileNamePattern>
+			<maxHistory>5</maxHistory>
+			<totalSizeCap>1GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+	<appender name="weixin"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoder>
+			<pattern>[%level] %d{HH:mm:ss.SSS} [%thread] - %msg%n
+			</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.dir}/weixin.log.%d{yyyy-MM-dd}
+			</fileNamePattern>
+			<maxHistory>5</maxHistory>
+			<totalSizeCap>1GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+	<logger name="trade" level="DEBUG" additivity="false">
+		<appender-ref ref="trade" />
+	</logger>
+	<logger name="weixin" level="INFO" additivity="false">
+		<appender-ref ref="weixin" />
+	</logger>
+	<logger name="org.mongodb.driver" level="WARN" additivity="false">
+		<appender-ref ref="console" />
+	</logger>
+	<root level="INFO">
+		<appender-ref ref="console" />
+		<appender-ref ref="default" />
+	</root>
+</configuration>
