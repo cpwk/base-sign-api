@@ -1,6 +1,6 @@
 package cn.maidaotech.edu.sign.api.support.service;
 
-import org.springframework.stereotype.Service;
+import cn.maidaotech.edu.sign.api.support.model.VCode;
 
 /**
  * @program: sign-api
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  **/
 public interface SmsService {
 
-    String getVcode(String mobile) throws Exception;
+    VCode getVcode(Long key) throws Exception;
 
-    void sendVcode(String mobile) throws Exception;
+    void sendVcode(Long key, String mobile) throws Exception;
 }

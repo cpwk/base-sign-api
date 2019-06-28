@@ -11,6 +11,8 @@ public class VCode {
     private Long key;
     private String code;
 
+    public VCode(){}
+
     public VCode(Long key, String code) {
         this.key = key;
         this.code = code;

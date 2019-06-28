@@ -10,6 +10,7 @@ import cn.maidaotech.edu.sign.api.commons.util.L;
 import cn.maidaotech.edu.sign.api.commons.util.StringUtils;
 import cn.maidaotech.edu.sign.api.support.model.SmsConfig;
 import cn.maidaotech.edu.sign.api.support.model.SupportErrors;
+import cn.maidaotech.edu.sign.api.support.model.VCode;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.CommonRequest;
@@ -21,7 +22,7 @@ import com.aliyuncs.exceptions.ServerException;
 import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.sunnysuperman.kvcache.RepositoryProvider;
-import com.sunnysuperman.kvcache.converter.StringModelConverter;
+import com.sunnysuperman.kvcache.converter.BeanModelConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,50 +48,48 @@ public class SmsServiceImp implements SmsService, SupportErrors {
     private TaskService taskService;
     @Autowired
     private KvCacheFactory kvCacheFactory;
-    private KvCacheWrap<String, String> vCodeCache;
+    private KvCacheWrap<Long, VCode> vCodeCache;
 
     @PostConstruct
     public void init() {
         vCodeCache = kvCacheFactory.create(new CacheOptions("m_code", 1, 300),
-                new RepositoryProvider<String, String>() {
+                new RepositoryProvider<Long, VCode>() {
                     @Override
-                    public String findByKey(String mobile) throws Exception {
+                    public VCode findByKey(Long mobile) throws Exception {
                         throw new ServiceException(ERR_MOBILE_VCODE_OVERTIME);
                     }
 
                     @Override
-                    public Map<String, String> findByKeys(Collection<String> mobiles) throws Exception {
+                    public Map<Long, VCode> findByKeys(Collection<Long> mobiles) throws Exception {
                         throw new UnsupportedOperationException("findByKeys");
                     }
-                }, StringModelConverter.getInstance());
+                }, new BeanModelConverter<>(VCode.class));
     }
 
     @Override
-    public String getVcode(String mobile) throws Exception {
-        if (!StringUtils.isChinaMobile(mobile)) {
-            throw new ServiceException(ERR_MOBILE_INVALID);
-        }
-        String code = vCodeCache.findByKey(mobile);
-        if (StringUtils.isEmpty(code)) {
+    public VCode getVcode(Long key) throws Exception {
+        try {
+            return vCodeCache.findByKey(key);
+        } catch (Exception e) {
             throw new ServiceException(ERR_MOBILE_VCODE_OVERTIME);
         }
-        return code;
     }
 
     @Override
-    public void sendVcode(String mobile) throws Exception {
+    public void sendVcode(Long key, String mobile) throws Exception {
         if (!StringUtils.isChinaMobile(mobile)) {
             throw new ServiceException(ERR_MOBILE_INVALID);
         }
-        String vcode = StringUtils.randomNumericString(VCODE_LENGTH);
+        String code = StringUtils.randomNumericString(VCODE_LENGTH);
+        VCode vcode = new VCode(key, code);
         taskService.addTask(new SendMobileVcodeTask(mobile, vcode));
     }
 
     private class SendMobileVcodeTask extends ApiTask {
         private String mobile;
-        private String vcode;
+        private VCode vcode;
 
-        public SendMobileVcodeTask(String mobile, String vcode) {
+        public SendMobileVcodeTask(String mobile, VCode vcode) {
             this.mobile = mobile;
             this.vcode = vcode;
         }
@@ -98,9 +97,9 @@ public class SmsServiceImp implements SmsService, SupportErrors {
         @Override
         protected void doApiWork() throws Exception {
             JSONObject param = new JSONObject();
-            param.put("code", vcode);
+            param.put("code", vcode.getCode());
             if (sendSms(mobile, smsConfig.getVcodeTemplateCode(), param)) {
-                vCodeCache.save(mobile, vcode);
+                vCodeCache.save(vcode.getKey(), vcode);
             }
         }
     }

@@ -8,6 +8,7 @@ import cn.maidaotech.edu.sign.api.commons.util.CollectionUtil;
 import cn.maidaotech.edu.sign.api.commons.util.DateUtils;
 import cn.maidaotech.edu.sign.api.commons.util.StringUtils;
 import cn.maidaotech.edu.sign.api.support.model.SupportErrors;
+import cn.maidaotech.edu.sign.api.support.model.VCode;
 import cn.maidaotech.edu.sign.api.support.service.SmsService;
 import cn.maidaotech.edu.sign.api.support.service.VCodeService;
 import cn.maidaotech.edu.sign.api.user.model.User;
@@ -83,14 +84,14 @@ public class UserServiceImp implements UserService, UserErrors {
     }
 
     @Override
-    public void signUp(User user, Long key) throws Exception {
-        if (StringUtils.isNotEqual(user.getVcode(), vCodeService.getVCode(key).getCode())) {
+    public void signUp(User user, VCode picCode, VCode smsCode) throws Exception {
+        if (StringUtils.isNotEqual(picCode.getCode(), vCodeService.getVCode(picCode.getKey()).getCode())) {
             throw new ServiceException(SupportErrors.ERR_VCODE_INVALID);
         }
         if (!StringUtils.isChinaMobile(user.getMobile())) {
             throw new ServiceException(ERR_USER_MOBILE_INVALID);
         }
-        if (StringUtils.isNotEqual(user.getMobileVCode(), smsService.getVcode(user.getMobile()))) {
+        if (StringUtils.isNotEqual(smsCode.getCode(), smsService.getVcode(smsCode.getKey()).getCode())) {
             throw new ServiceException(SupportErrors.ERR_MOBILE_INVALID);
         }
         if (!StringUtils.validatePassword(user.getPassword())) {

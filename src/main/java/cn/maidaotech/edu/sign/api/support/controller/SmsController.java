@@ -23,8 +23,8 @@ public class SmsController extends BaseController {
 
     @Action(session = ActionSession.NONE)
     @RequestMapping("/phone_vcode")
-    public ModelAndView phone_vcode(String mobile) throws Exception {
-        smsService.sendVcode(mobile);
+    public ModelAndView phone_vcode(Long key, String mobile) throws Exception {
+        smsService.sendVcode(key, mobile);
         return feedback();
     }
 }

@@ -4,11 +4,10 @@ import cn.maidaotech.edu.sign.api.commons.context.Contexts;
 import cn.maidaotech.edu.sign.api.commons.controller.Action;
 import cn.maidaotech.edu.sign.api.commons.controller.ActionSession;
 import cn.maidaotech.edu.sign.api.commons.controller.BaseController;
+import cn.maidaotech.edu.sign.api.support.model.VCode;
 import cn.maidaotech.edu.sign.api.user.model.User;
 import cn.maidaotech.edu.sign.api.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -28,9 +27,9 @@ public class UsrUserController extends BaseController {
 
     @Action(session = ActionSession.NONE)
     @RequestMapping(value = "/sign_up")
-    public ModelAndView sign_up(String user, Long key) throws Exception {
+    public ModelAndView sign_up(String user, String picCode, String smsCode) throws Exception {
         User model = parseModel(user, new User());
-        userService.signUp(model, key);
+        userService.signUp(model, parseModel(picCode, new VCode()), parseModel(smsCode, new VCode()));
         return feedback(model);
     }
 

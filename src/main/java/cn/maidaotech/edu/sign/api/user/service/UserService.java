@@ -1,5 +1,6 @@
 package cn.maidaotech.edu.sign.api.user.service;
 
+import cn.maidaotech.edu.sign.api.support.model.VCode;
 import cn.maidaotech.edu.sign.api.user.model.User;
 import cn.maidaotech.edu.sign.api.user.model.UserSession;
 
@@ -13,7 +14,7 @@ import java.util.Map;
  **/
 public interface UserService {
 
-    void signUp(User user, Long key) throws Exception;
+    void signUp(User user, VCode picCode, VCode smsCode) throws Exception;
 
     Map<String, Object> signIn(String username, String password, String ip) throws Exception;
 
