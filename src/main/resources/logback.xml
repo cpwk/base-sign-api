@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <configuration scan="false">
-	<property name="log.dir" value="/data/wk-api/logs" />
+	<property name="log.dir" value="/opt/data/logs" />
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
 			<pattern>[%level] %d{HH:mm:ss.SSS} [%thread] - %msg%n
