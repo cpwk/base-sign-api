@@ -33,7 +33,7 @@ public class KvCacheFactory {
     public void init() {
         JedisPool redisPool = RedisUtils.createPool(config);
         executor = new RedisKvCacheExecutor(redisPool);
-        client = new RedisClient(redisPool, true);
+        // client = new RedisClient(redisPool, true);
     }
 
     public <K, T> KvCacheWrap<K, T> create(CacheOptions options, RepositoryProvider<K, T> repository,

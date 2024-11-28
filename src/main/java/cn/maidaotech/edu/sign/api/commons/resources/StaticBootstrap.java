@@ -12,7 +12,7 @@ import java.util.Set;
 @Service
 public class StaticBootstrap {
 
-    @PostConstruct
+    // @PostConstruct
     public void init() {
         Reflections reflections = Application.getAppReflection();
         {
